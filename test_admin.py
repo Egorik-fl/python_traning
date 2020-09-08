@@ -9,34 +9,69 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import unittest
+from group import Group
+
+# exec_path = r'I:\Python\aqwe\PET\testers\geckodriver.exe'
+# URL = r'http://127.0.0.1:8000/admin/login/'
+# driver = webdriver.Firefox(executable_path=exec_path)
+# driver.get(URL)
 
 class TestAdmin():
-  def setup_method(self, method):
-    self.driver = webdriver.Chrome()
-    self.vars = {}
-  
-  def teardown_method(self, method):
-    self.driver.quit()
-  
-  def test_admin(self):
-    self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
-    self.driver.find_element(By.ID, "id_username").click()
-    self.driver.find_element(By.ID, "id_username").send_keys("root")
-    self.driver.find_element(By.CSS_SELECTOR, ".login").click()
-    self.driver.find_element(By.ID, "id_password").click()
-    self.driver.find_element(By.ID, "id_password").send_keys("root")
-    self.driver.find_element(By.CSS_SELECTOR, ".submit-row > input").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".model-articles .addlink").click()
-    self.driver.find_element(By.ID, "id_title").send_keys("qwe")
-    self.driver.find_element(By.ID, "id_post").click()
-    self.driver.find_element(By.ID, "id_post").send_keys("qweqwe")
-    self.driver.find_element(By.CSS_SELECTOR, ".date-icon").click()
-    self.driver.find_element(By.LINK_TEXT, "9").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".clock-icon").click()
-    self.driver.find_element(By.LINK_TEXT, "Midnight").click()
-    self.driver.find_element(By.NAME, "_save").click()
-    self.driver.find_element(By.LINK_TEXT, "News").click()
-    self.driver.find_element(By.LINK_TEXT, "Articless").click()
-    self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(4)").click()
-    self.driver.set_window_size(1315, 837)
-  
+    def setup_method(self, method):
+        self.driver = webdriver.Firefox(executable_path=r'I:\Python\aqwe\PET\testers\geckodriver.exe')
+        self.vars = {}
+
+    def teardown_method(self, method):
+        self.driver.quit()
+
+    def test_admin(self):
+        self.open_home_page()
+        self.login(username="root", password="root")
+        self.open_page()
+        self.group_form(Group(title="qwe", post="qweqwe"))
+        self.criet()
+        self.logout()
+
+    def test_add_empty_group(self):
+        self.open_home_page()
+        self.login(username="root", password="root")
+        self.open_page()
+        self.group_form(Group(title="", post=""))
+        self.criet()
+        self.logout()
+
+    def criet(self):
+        self.driver.find_element(By.LINK_TEXT, "News").click()
+        self.driver.find_element(By.LINK_TEXT, "Articless").click()
+
+    def logout(self):
+        self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(4)").click()
+        self.driver.set_window_size(1315, 837)
+
+    def group_form(self, group):
+        # fill group form
+        self.driver.find_element(By.ID, "id_title").send_keys(group.title)
+        self.driver.find_element(By.ID, "id_post").click()
+        self.driver.find_element(By.ID, "id_post").send_keys(group.post)
+        self.driver.find_element(By.CSS_SELECTOR, ".date-icon").click()
+        self.driver.find_element(By.LINK_TEXT, "9").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".clock-icon").click()
+        self.driver.find_element(By.LINK_TEXT, "Midnight").click()
+        # save
+        self.driver.find_element(By.NAME, "_save").click()
+
+
+    def open_page(self):
+        self.driver.find_element(By.CSS_SELECTOR, ".model-articles .addlink").click()
+
+    def login(self, username, password):
+        self.driver.find_element(By.ID, "id_username").click()
+        self.driver.find_element(By.ID, "id_username").send_keys(username)
+        self.driver.find_element(By.CSS_SELECTOR, ".login").click()
+        self.driver.find_element(By.ID, "id_password").click()
+        self.driver.find_element(By.ID, "id_password").send_keys(password)
+        self.driver.find_element(By.CSS_SELECTOR, ".submit-row > input").click()
+
+    def open_home_page(self):
+        self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
