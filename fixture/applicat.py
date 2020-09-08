@@ -1,18 +1,12 @@
-import pytest
-import time
-import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+# from fixture.session import SessionHelper
 
 class Application:
     def __init__(self):
         self.driver = webdriver.Firefox(executable_path=r'I:\Python\aqwe\PET\testers\geckodriver.exe')
         self.vars = {}
+        # self.session = SessionHelper(self)
 
     def criet(self):
         self.driver.find_element(By.LINK_TEXT, "News").click()
@@ -50,3 +44,13 @@ class Application:
 
     def destroy(self):
         self.driver.quit()
+
+    def delete_first_group(self):
+        self.driver.find_element(By.LINK_TEXT, "Articless").click()
+        self.driver.find_element(By.NAME, "_selected_action").click()
+        self.driver.find_element(By.NAME, "action").click()
+        dropdown = self.driver.find_element(By.NAME, "action")
+        dropdown.find_element(By.XPATH, "//option[. = 'Delete selected articless']").click()
+        self.driver.find_element(By.NAME, "action").click()
+        self.driver.find_element(By.NAME, "index").click()
+        self.driver.find_element(By.CSS_SELECTOR, "input:nth-child(4)").click()
